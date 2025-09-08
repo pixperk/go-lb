@@ -15,7 +15,7 @@ type LoadBalancer interface {
 func NewLoadBalancer(strategy string, servers []*url.URL) LoadBalancer {
 	switch strategy {
 	case "rr":
-		return &loadbalancers.RR{Servers: servers}
+		return loadbalancers.NewRoundRobin(servers)
 	case "lc":
 		return loadbalancers.NewLeastConnections(servers)
 	}

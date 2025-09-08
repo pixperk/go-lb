@@ -113,6 +113,7 @@ func (lb *LeastConnections) Handler(w http.ResponseWriter, r *http.Request) {
 	proxy.ServeHTTP(w, r)
 }
 
+// connectionTrackingTransport wraps RoundTripper to track connection completion
 type connectionTrackingTransport struct {
 	transport http.RoundTripper
 	server    *LCServer

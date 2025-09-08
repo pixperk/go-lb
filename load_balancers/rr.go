@@ -12,14 +12,29 @@ type RR struct {
 	counter uint64
 }
 
+func NewRoundRobin(servers []*url.URL) *RR {
+	return &RR{
+		Servers: servers,
+		counter: 0,
+	}
+}
+
 func (lb *RR) NextServer() *url.URL {
-	//round robin
+	if len(lb.Servers) == 0 {
+		return nil
+	}
+
 	idx := atomic.AddUint64(&lb.counter, 1)
-	return lb.Servers[int(idx)%len(lb.Servers)]
+	return lb.Servers[(idx-1)%uint64(len(lb.Servers))]
 }
 
 func (lb *RR) Handler(w http.ResponseWriter, r *http.Request) {
 	target := lb.NextServer()
+	if target == nil {
+		http.Error(w, "No servers available", http.StatusServiceUnavailable)
+		return
+	}
+
 	proxy := httputil.NewSingleHostReverseProxy(target)
 	proxy.ServeHTTP(w, r)
 }
