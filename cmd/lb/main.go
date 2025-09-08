@@ -24,9 +24,7 @@ func main() {
 		servers = append(servers, parsed)
 	}
 
-	lb := &lb.LoadBalancer{
-		Servers: servers,
-	}
+	lb := lb.NewLoadBalancer("rr", servers)
 
 	http.HandleFunc("/", lb.Handler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
