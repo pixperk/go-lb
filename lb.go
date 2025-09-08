@@ -16,6 +16,8 @@ func NewLoadBalancer(strategy string, servers []*url.URL) LoadBalancer {
 	switch strategy {
 	case "rr":
 		return &loadbalancers.RR{Servers: servers}
+	case "lc":
+		return loadbalancers.NewLeastConnections(servers)
 	}
 	return nil
 }
